@@ -1,0 +1,18 @@
+<h1>Nos articles</h1>
+
+<%= link_to 'Nouvel article', new_article_path, class: 'btn btn-primary' %>
+
+<div class="mt-4">
+  <% @articles.each do |article| %>
+    <div class="mb-3">
+    <h2><%= article.title %></h2>
+    <p><%= article.body %></p>
+    <%= link_to "Editer", edit_article_path(article), class: "btn btn-primary" %>
+    <%= link_to "Voir", show_article_path(article), class: "btn btn-info" %>
+    <form action="<%= delete_article_path(article) %>" method="post" class="d-inline">
+      <%= csrf_tag %>
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Voulez-vous vraiment supprimer cet article ?');">Supprimer</button>
+    </form>
+  <% end %>
+</div>
+<%= link_to "Retour à l'accueil", root_path, class: "btn btn-secondary" %>

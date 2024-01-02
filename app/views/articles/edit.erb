@@ -1,0 +1,18 @@
+<h1>Éditer l'Article</h1>
+
+<form action="<%= show_article_path(@article) %>" method="post">
+  <%= csrf_tag %>
+  <input type="hidden" name="_method" value="patch">
+
+  <div class="form-group">
+    <label for="article_title">Titre</label>
+    <input type="text" id="article_title" name="article[title]" value="<%= @article.title %>" class="form-control">
+  </div>
+
+  <div class="form-group">
+    <label for="article_body">Contenu</label>
+    <textarea id="article_body" name="article[body]" class="form-control"><%= @article.body %></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Mettre à jour</button>
+</form>

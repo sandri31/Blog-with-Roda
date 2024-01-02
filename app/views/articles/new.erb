@@ -1,0 +1,7 @@
+<h1>Nouvel article</h1>
+
+<% form @article, {action: articles_path, method: :post}, wrapper: :div, labeler: :explicit do |f| %>
+  <%= f.input :title, class: "form-control", label_attr: { class: "form-label" }, wrapper_attr: { class: "mb-3" }, required: false %>
+  <%= f.input :body, as: :textarea, class: "form-control", label_attr: { class: "form-label" }, wrapper_attr: { class: "mb-3" }, required: false %>
+  <%= f.button value: "Valider", class: "btn btn-primary", wrapper_attr: { class: "mb-3" } %>
+<% end %>
