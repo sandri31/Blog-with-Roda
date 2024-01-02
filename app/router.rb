@@ -30,22 +30,16 @@ class Router < Roda
       view 'home'
     end
 
-    r.on 'about' do
-      r.get do
-        view 'about'
-      end
+    r.is 'about' do
+      view 'about'
     end
 
-    r.on 'contact' do
-      r.get do
-        view 'contact'
-      end
+    r.is 'contact' do
+      view 'contact'
     end
 
-    r.on 'legal_mentions' do
-      r.get do
-        view 'legal_mentions'
-      end
+    r.is 'legal_mentions' do
+      view 'legal_mentions'
     end
 
     # GET /articles/*
