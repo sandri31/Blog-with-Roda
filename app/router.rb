@@ -26,80 +26,70 @@ class Router < Roda
   path(:show_article) { |article| "/articles/#{article.id}" }
 
   route do |r|
-    r.root do
-      view 'home'
-    end
+    # Root route ("/"), renders the home view
+    r.root { view 'home' }
 
-    r.is 'about' do
-      view 'about'
-    end
+    # Static pages
+    r.is('about') { view 'about' }
+    r.is('contact') { view 'contact' }
+    r.is('legal_mentions') { view 'legal_mentions' }
 
-    r.is 'contact' do
-      view 'contact'
-    end
-
-    r.is 'legal_mentions' do
-      view 'legal_mentions'
-    end
-
-    # GET /articles/*
+    # Routes under "/articles"
     r.on 'articles' do
-      # GET /articles
-      r.get true do
-        @articles = Article.all
+      r.on Integer do |article_id|
+        # Fetches the article or returns 404 if not found
+        @article = Article.with_pk!(article_id) or r.halt 404
 
-        view 'articles/index'
+        r.is 'delete' do
+          # POST /articles/[article_id]/delete
+          r.post do
+            @article.destroy
+            flash[:error] = 'Article supprimé avec succès'
+            r.redirect articles_path
+          end
+        end
+
+        r.is do
+          r.get { view 'articles/show' }
+          r.get('edit') { view 'articles/edit' }
+
+          # POST /articles/[article_id]
+          r.post do
+            @article.set(r.params['article']) if r.params['article']
+            if @article.save
+              flash[:notice] = 'Article mis à jour avec succès'
+              r.redirect articles_path
+            else
+              view 'articles/edit'
+            end
+          end
+        end
+      end
+
+      r.is do
+        # GET /articles
+        r.get do
+          @articles = Article.all
+          view 'articles/index'
+        end
+
+        # POST /articles
+        r.post do
+          @article = Article.new
+          forme_set(@article)
+          if @article.save
+            flash[:notice] = 'Article créé avec succès'
+            r.redirect articles_path
+          else
+            view 'articles/new'
+          end
+        end
       end
 
       # GET /articles/new
-      r.get 'new' do
+      r.get('new') do
         @article = Article.new
         view 'articles/new'
-      end
-
-      # POST /articles
-      r.post true do
-        @article = Article.new
-        forme_set(@article)
-        @article.save
-
-        flash[:notice] = 'Article créé avec succès'
-        r.redirect articles_path
-      end
-
-      # GET /articles/{id}/*
-      r.on Integer do |article_id|
-        @article = Article.with_pk!(article_id)
-
-        # DELETE /articles/{id}
-        r.post 'delete' do
-          @article.destroy
-
-          flash[:error] = 'Article supprimé avec succès'
-          r.redirect articles_path
-        end
-
-        # GET /articles/{id}
-        r.get true do
-          view 'articles/show'
-        end
-
-        # PATCH /articles/{id}
-        r.get 'edit' do
-          view 'articles/edit'
-        end
-
-        # POST /articles/{id}
-        r.post do
-          @article.set(r.params['article']) if r.params['article']
-
-          if @article.save
-            flash[:notice] = 'Article mis à jour avec succès'
-            r.redirect articles_path
-          else
-            view 'articles/edit'
-          end
-        end
       end
     end
   end
