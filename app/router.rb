@@ -49,19 +49,17 @@ class Router < Roda
           end
         end
 
-        r.is do
-          r.get { view 'articles/show' }
-          r.get('edit') { view 'articles/edit' }
+        r.get('edit') { view 'articles/edit' }
+        r.get { view 'articles/show' }
 
-          # POST /articles/[article_id]
-          r.post do
-            @article.set(r.params['article']) if r.params['article']
-            if @article.save
-              flash[:notice] = 'Article mis à jour avec succès'
-              r.redirect articles_path
-            else
-              view 'articles/edit'
-            end
+        # POST /articles/[article_id]
+        r.post do
+          @article.set(r.params['article']) if r.params['article']
+          if @article.save
+            flash[:notice] = 'Article mis à jour avec succès'
+            r.redirect articles_path
+          else
+            view 'articles/edit'
           end
         end
       end
