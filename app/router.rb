@@ -30,9 +30,9 @@ class Router < Roda
     r.root { view 'home' }
 
     # Static pages
-    r.is('about') { view 'about' }
-    r.is('contact') { view 'contact' }
-    r.is('legal_mentions') { view 'legal_mentions' }
+    ['about', 'contact', 'legal_mentions'].each do |page|
+      r.is(page) { view page }
+    end
 
     # Routes under "/articles"
     r.on 'articles' do
